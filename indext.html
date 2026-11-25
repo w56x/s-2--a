@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>الصفحة الأولى.. من جديد ✨</title>
+    
+    <!-- استيراد خطوط عربية فاخرة من Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة Tailwind CSS للتصميم المتجاوب -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- مكتبة Tone.js لتوليد مؤثرات صوتية ناعمة بدون روابط خارجية -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
+    <!-- مكتبة Canvas Confetti للاحتفالات -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        serif: ['Amiri', 'serif'],
+                    },
+                    colors: {
+                        midnight: '#090B14',
+                        deepnavy: '#111629',
+                        gold: {
+                            light: '#F9E5B8',
+                            DEFAULT: '#D4AF37',
+                            dark: '#997A1E',
+                        },
+                        rose: {
+                            soft: '#F4C2C2',
+                            deep: '#B76E79',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 2.5s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '200% 0' },
+                            '100%': { backgroundPosition: '-200% 0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* إعدادات أساسية وتأثيرات مخصصة */
+        body {
+            background: radial-gradient(circle at top center, #161C36 0%, #090B14 60%, #05060A 100%);
+            color: #F8FAFC;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* خلفية النجوم المتحركة */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* تأثير الزجاج الفاخر */
+        .glass-card {
+            background: rgba(17, 22, 41, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+        }
+
+        /* تأثير النص الذهبي المتدرج */
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #F9E5B8 0%, #D4AF37 50%, #F3D179 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* تأثير لمعة الزر الذهبي */
+        .btn-gold-shimmer {
+            background: linear-gradient(110deg, #B8860B 15%, #F9E5B8 45%, #D4AF37 65%, #997A1E 90%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+
+        /* حركات تقليب بطاقات العهود 3D */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.25rem;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* تصميم تذكرة الكوبون */
+        .ticket-cutout {
+            position: relative;
+        }
+        .ticket-cutout::before, .ticket-cutout::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            background-color: #090B14;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+        }
+        .ticket-cutout::before {
+            right: -11px;
+        }
+        .ticket-cutout::after {
+            left: -11px;
+        }
+
+        /* شريط تمرير مخفي وأنيق */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090B14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-gold/30 selection:text-gold-light">
+
+    <!-- كانفاس النجوم والجزيئات الذهبية في الخلفية -->
+    <canvas id="starfield"></canvas>
+
+    <!-- ========================================== -->
+    <!-- مشغل الموسيقى العائم في زاوية الشاشة -->
+    <!-- ========================================== -->
+    <div id="music-widget" class="fixed bottom-5 left-5 z-50">
+        <div class="flex items-center gap-1.5 glass-card rounded-full p-1.5 border border-gold/40 shadow-[0_0_25px_rgba(212,175,55,0.25)]">
+            <button id="music-toggle-btn" onclick="toggleBackgroundMusic()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/15 hover:bg-gold/25 text-gold-light text-xs font-medium transition-all" title="تشغيل / إيقاف الأغنية">
+                <span id="music-icon" class="text-sm">🔇</span>
+                <span id="music-status-text">تشغيل الأغنية</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- عنصر الصوت لأغنية الـ MP3 -->
+    <audio id="bg-audio-element" autoplay loop preload="auto"></audio>
+
+    <!-- صندوق التنبيهات المخصص (بديل alert) -->
+    <div id="custom-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-500 transform -translate-y-4 w-[90%] max-w-sm">
+        <div class="glass-card rounded-2xl px-5 py-3.5 border border-gold/50 flex items-center gap-3 shadow-2xl">
+            <span id="toast-icon" class="text-2xl">✨</span>
+            <p id="toast-message" class="text-sm font-medium text-gold-light leading-snug"></p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. الشاشة الترحيبية (الظرف / القفل التفاعلي) -->
+    <!-- ========================================== -->
+    <section id="welcome-screen" class="fixed inset-0 z-40 flex flex-col items-center justify-center px-6 text-center bg-midnight/95 backdrop-blur-xl transition-all duration-1000">
+        <!-- هالة ضوئية خلفية -->
+        <div class="absolute w-72 h-72 bg-gold/15 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute w-56 h-56 bg-rose-deep/15 rounded-full blur-3xl translate-y-12"></div>
+
+        <div class="relative z-10 max-w-md w-full flex flex-col items-center">
+            <span class="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wider text-gold-light bg-gold/10 border border-gold/30 mb-6">
+                الهدية الرابعة والأخيرة ✨
+            </span>
+
+            <h1 class="font-serif text-3xl sm:text-4xl font-bold text-gold-gradient mb-3 leading-relaxed">
+                بعض الحكايات تستحق<br>بداية تليق بجمالها..
+            </h1>
+            
+            <p class="text-slate-300/85 text-sm sm:text-base mb-10 leading-relaxed max-w-xs">
+                بعد الثلاث هدايا اللي طافت.. هذا ميثاقنا الجديد، محفوظ لك وحدك.
+            </p>
+
+            <!-- زر الظرف / القلب التفاعلي لفتح الهدية -->
+            <button id="open-gift-btn" onclick="openGift()" class="group relative flex flex-col items-center justify-center focus:outline-none">
+                <div class="w-28 h-28 rounded-full glass-card border-2 border-gold/60 flex items-center justify-center shadow-[0_0_40px_rgba(212,175,55,0.3)] group-hover:scale-105 group-active:scale-95 transition-all duration-300 animate-float">
+                    <!-- أيقونة ظرف وقلب SVG -->
+                    <svg class="w-12 h-12 text-gold-light group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        <path fill="#D4AF37" stroke="none" d="M12 10.8c-.6-.7-1.7-.7-2.3 0-.6.6-.6 1.6 0 2.2L12 15.2l2.3-2.2c.6-.6.6-1.6 0-2.2-.6-.7-1.7-.7-2.3 0z" />
+                    </svg>
+                </div>
+                <span class="mt-5 px-6 py-2.5 rounded-full btn-gold-shimmer text-midnight font-bold text-sm shadow-lg shadow-gold/20 group-hover:shadow-gold/40 transition-all">
+                    اضغطي لفتح الهدية ❤️
+                </span>
+            </button>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- المحتوى الرئيسي للصفحة التفاعلية -->
+    <!-- ========================================== -->
+    <main id="main-content" class="relative z-10 max-w-lg mx-auto px-4 pt-10 pb-20 opacity-0 transition-opacity duration-1000 hidden">
+        
+        <!-- ترويسة الصفحة -->
+        <header class="text-center mb-10">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gold/10 border border-gold/25 text-gold-light text-xs mb-3">
+                <span>✦</span>
+                <span>ميثاق البداية الجديدة</span>
+                <span>✦</span>
+            </div>
+            <h1 class="font-serif text-4xl font-bold text-gold-gradient mb-2">
+                الصفحة الأولى.. من جديد
+            </h1>
+            <p class="text-xs text-slate-400">
+                مُعدّة بكل حب وصدق.. لكِ وحدكِ
+            </p>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- القسم 1: رسالة من القلب (مع إمكانية تخصيص الاسم) -->
+        <!-- ========================================== -->
+        <section class="mb-12">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 relative overflow-hidden">
+                <!-- زخرفة زاوية -->
+                <div class="absolute -top-10 -left-10 w-32 h-32 bg-gold/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="flex items-center justify-between mb-5 border-b border-gold/15 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xl">💌</span>
+                        <h2 class="font-serif text-2xl font-bold text-gold-light">رسالة من القلب</h2>
+                    </div>
+                    <!-- زر صغير لتخصيص الاسم إذا رغب المستخدم -->
+                    <button onclick="toggleNameEditor()" class="text-xs text-gold/80 hover:text-gold-light underline decoration-gold/40 underline-offset-4 px-2 py-1 rounded-lg">
+                        تخصيص الاسم ✎
+                    </button>
+                </div>
+
+                <!-- حقل تعديل الاسم (مخفي افتراضياً) -->
+                <div id="name-editor" class="hidden mb-4 bg-midnight/60 p-3 rounded-2xl border border-gold/25 flex items-center gap-2">
+                    <input type="text" id="her-name-input" placeholder="اكتب اسمها أو دلعها هنا..." class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none px-2">
+                    <button onclick="saveHerName()" class="px-3.5 py-1.5 rounded-xl bg-gold text-midnight font-bold text-xs shrink-0">
+                        حفظ
+                    </button>
+                </div>
+
+                <!-- نص الرسالة -->
+                <div class="space-y-4 text-slate-200 text-sm sm:text-base leading-loose font-normal">
+                    <p class="font-serif text-xl text-rose-soft font-bold">
+                        إلى <span id="display-her-name" class="text-gold-light">نور عيني يمنى ياسر</span>..
+                    </p>
+                    <p>
+                        يمكن مرت علينا أيام ما كانت سهلة، ولحظات سوء فهم أخذت من وقتنا وراحتنا.. لكن الحقيقة الوحيدة اللي ما تغيرت في قلبي لحظة، هي إنك <span class="text-gold-light font-medium">أجمل شي صار لي</span>، وإن وجودك بحياتي هو الأمان اللي أدوره دايم.
+                    </p>
+                    <p>
+                        اليوم، قدامك وقدام قلبي، أنا أطوي صفحة الماضي بكل ما فيها من عتب أو زعل، ونبدأ سوا <strong class="text-gold-light">من الصفر</strong>.. بقلب صافي، وحب أكبر، وفهم أعمق لبعض.
+                    </p>
+                    <div class="pt-2 text-left space-y-1">
+                        <p class="font-serif text-lg text-gold-light">
+                            — اللي يبيك دايم وأبداً ❤️
+                        </p>
+                        <p class="font-serif text-base text-rose-soft">
+                            مع حبي كريم
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- القسم 3: بنك الكوبونات الخاص (VIP Tickets) -->
+        <!-- ========================================== -->
+        <section class="mb-12">
+            <div class="text-center mb-6">
+                <span class="inline-block px-3 py-0.5 rounded-full bg-rose-deep/20 border border-rose-soft/30 text-rose-soft text-[11px] font-medium mb-2">
+                    صالحة مدى الحياة • قابلة للتجديد ♾️
+                </span>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-gold-gradient mb-1.5">
+                    بنك الكوبونات الخاص
+                </h2>
+                <p class="text-xs text-slate-400">
+                    بطاقات VIP تحت تصرفك في أي وقت.. فعّليها وأرسلي لي إشعار فوراً
+                </p>
+            </div>
+
+            <div id="coupons-container" class="space-y-4">
+                <!-- الكوبونات سيتم توليدها ديناميكياً عبر JS لحفظ حالتها وتسهيل التفاعل -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- القسم 4: بصمة البداية (الختام التفاعلي) -->
+        <!-- ========================================== -->
+        <section class="mb-6">
+            <div class="glass-card rounded-3xl p-7 text-center border border-gold/40 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-gold/10 via-transparent to-transparent pointer-events-none"></div>
+                
+                <span class="text-3xl mb-3 block"> fingerprint </span>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-gold-light mb-2">
+                    بصمة البداية الجديدة
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed max-w-xs mx-auto">
+                    إذا قلبك راضي ومستعدة نطوي اللي فات ونبدأ سوا من جديد.. اضغطي الزر تحت لتسجيل لحظتنا:
+                </p>
+
+                <!-- زر البصمة / الموافقة -->
+                <div id="signature-action-area">
+                    <button id="agree-btn" onclick="confirmNewBeginning()" class="w-full py-4 px-6 rounded-2xl btn-gold-shimmer text-midnight font-extrabold text-base shadow-[0_0_25px_rgba(212,175,55,0.4)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <span>موافقة نبدأ من جديد</span>
+                        <span class="text-xl">❤️</span>
+                    </button>
+                </div>
+
+                <!-- بطاقة التوثيق بعد الضغط (مخفية افتراضياً) -->
+                <div id="signature-confirmed" class="hidden mt-2 p-5 rounded-2xl bg-midnight/80 border border-gold/50 animate-fade-in">
+                    <div class="text-3xl mb-2">🥂✨</div>
+                    <h3 class="font-serif text-xl font-bold text-gold-light mb-1">
+                        تم توثيق بدايتنا الجديدة بنجاح!
+                    </h3>
+                    <p class="text-xs text-slate-300 mb-3">
+                        هالتاريخ بيبقى شاهد على أجمل رجعة وأصدق حب:
+                    </p>
+                    <div id="official-date" class="inline-block px-4 py-1.5 rounded-xl bg-gold/15 border border-gold/30 text-gold-light font-bold text-sm mb-4">
+                        <!-- التاريخ يضاف تلقائياً -->
+                    </div>
+                    
+                    <!-- زر إرسال البشارة عبر واتساب -->
+                    <a id="whatsapp-final-btn" href="#" target="_blank" class="w-full py-3 px-4 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-[#4ADE80] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all">
+                        <span>بشّريني بموافقتك على واتساب 💌</span>
+                    </a>
+
+                    <!-- زر صغير لإعادة تعيين البصمة في حال الضغط بالغلط -->
+                    <button onclick="resetNewBeginning()" class="mt-3 text-[11px] text-slate-400 hover:text-gold-light underline underline-offset-4 transition-colors">
+                        إعادة تعيين البصمة ↻
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- تذييل بسيط -->
+        <footer class="text-center text-[11px] text-slate-500 pt-4">
+            صُنعت خصيصاً لعيونك • كل الحقوق محفوظة لقلبك ❤️
+        </footer>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- البرمجة والتفاعلات (JavaScript) -->
+    <!-- ========================================== -->
+    <script>
+        // ==========================================
+        // 🎵 ضع اسم ملف الأغنية (MP3) أو رابطها هنا بين علامتي التنصيص:
+        // مثال: const musicSrc = "song.mp3";
+        // ==========================================
+        const musicSrc = "song.mp3";
+
+        // ==========================================
+        // 📱 ضع رقم جوالك بالصيغة الدولية (بدون + أو أصفار بالبداية) لكي تصل الرسائل إليك مباشرة:
+        // مثال: const whatsappNumber = "966579389121";
+        // ==========================================
+        const whatsappNumber = "";
+
+        // 1. بيانات الكوبونات الأربعة
+        const couponsData = [
+            {
+                id: 'no-argument',
+                icon: '🎟️',
+                title: 'كوبون "بدون نقاش"',
+                desc: 'إذا صار سوء فهم، تستخدمينه ونقفل الموضوع فوراً بدون زعل أو عتب.',
+                badge: 'VIP • أولوية قصوى',
+                waText: 'قررت أستخدم كوبون: بدون نقاش 🎟️❤️ خلاص قفلنا الموضوع وبدون أي زعل!'
+            },
+            {
+                id: 'your-command',
+                icon: '👑',
+                title: 'كوبون "الأمر أمرك"',
+                desc: 'تختارين أي شي تبينه (طلعة، أكلة، فيلم، سالفة) وأنا أنفذ فوراً بدون ما أقول لا.',
+                badge: 'VIP • تنفيذ فوري',
+                waText: 'قررت أستخدم كوبون: الأمر أمرك 👑✨ جهّز نفسك، الطلب جايك بالطريق!'
+            },
+            {
+                id: 'open-call',
+                icon: '📞',
+                title: 'كوبون "مكالمة مفتوحة"',
+                desc: 'بأي وقت تحسين إنك متضايقة أو مشتاقة، تدقين وأنا كلي لك لو كنت وسط أشغالي.',
+                badge: 'VIP • 24/7',
+                waText: 'قررت أستخدم كوبون: مكالمة مفتوحة 📞❤️ فضّي نفسك لي الحين!'
+            },
+            {
+                id: 'instant-treat',
+                icon: '🎁',
+                title: 'كوبون "ترضية فورية"',
+                desc: 'في حال زعلتك بدون قصد، ترضية خاصة تليق فيك وتطيب خاطرك فوراً.',
+                badge: 'VIP • ضمان السعادة',
+                waText: 'قررت أستخدم كوبون: ترضية فورية 🎁🤍 عليك ترضية تليق فيني الحين!'
+            }
+        ];
+
+        // حالة الكوبونات المفعلة (تُحفظ في ذاكرة المتصفح لتبقى مفعلة حتى لو أغلقت الصفحة)
+        let activatedCoupons = {};
+        try {
+            activatedCoupons = JSON.parse(localStorage.getItem('activatedCoupons_v1')) || {};
+        } catch (e) {
+            activatedCoupons = {};
+        }
+
+        // 2. تهيئة الصوت الناعم باستخدام Tone.js
+        let synth;
+        function playSoftChime(notes = ["C5", "E5", "G5", "B5"]) {
+            try {
+                if (typeof Tone !== 'undefined') {
+                    if (Tone.context.state !== 'running') {
+                        Tone.start();
+                    }
+                    if (!synth) {
+                        synth = new Tone.PolySynth(Tone.Synth, {
+                            oscillator: { type: "sine" },
+                            envelope: { attack: 0.05, decay: 0.3, sustain: 0.2, release: 1.2 }
+                        }).toDestination();
+                        synth.volume.value = -10;
+                    }
+                    const now = Tone.now();
+                    notes.forEach((note, index) => {
+                        synth.triggerAttackRelease(note, "8n", now + index * 0.12);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio feedback skipped:", e);
+            }
+        }
+
+        // 3. دالة إظهار التنبيهات الأنيقة (بديل alert)
+        let toastTimeout;
+        function showToast(message, icon = '✨') {
+            const toast = document.getElementById('custom-toast');
+            if (!toast) return;
+            document.getElementById('toast-message').textContent = message;
+            document.getElementById('toast-icon').textContent = icon;
+            
+            toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+            }, 3500);
+        }
+
+        // 4. تأثير الاحتفال الذهبي والوردي (Confetti)
+        function triggerGoldConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 75,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#D4AF37', '#F9E5B8', '#F4C2C2', '#FFFFFF']
+                });
+            }
+        }
+
+        // 5. فتح الهدية من الشاشة الترحيبية
+        function openGift() {
+            playSoftChime(["C5", "E5", "G5", "C6"]);
+            triggerGoldConfetti();
+            startBackgroundMusic();
+
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const mainContent = document.getElementById('main-content');
+
+            welcomeScreen.classList.add('opacity-0', 'scale-105', 'pointer-events-none');
+            
+            setTimeout(() => {
+                welcomeScreen.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                // تفعيل التلاشي التدريجي للمحتوى
+                requestAnimationFrame(() => {
+                    mainContent.classList.remove('opacity-0');
+                });
+            }, 700);
+        }
+
+        // 6. تخصيص الاسم وحفظه
+        function toggleNameEditor() {
+            const editor = document.getElementById('name-editor');
+            editor.classList.toggle('hidden');
+            if (!editor.classList.contains('hidden')) {
+                document.getElementById('her-name-input').focus();
+            }
+        }
+
+        function saveHerName() {
+            const input = document.getElementById('her-name-input').value.trim();
+            if (input) {
+                document.getElementById('display-her-name').textContent = input;
+                try {
+                    localStorage.setItem('herCustomName_v1', input);
+                } catch (e) {}
+                showToast('تم حفظ الاسم في الرسالة بنجاح ✨', '💌');
+            }
+            document.getElementById('name-editor').classList.add('hidden');
+        }
+
+        // استرجاع الاسم المحفوظ إن وجد
+        try {
+            const savedName = localStorage.getItem('herCustomName_v1');
+            if (savedName) {
+                document.getElementById('display-her-name').textContent = savedName;
+            }
+        } catch (e) {}
+
+        // 7. تقليب بطاقات العهود
+        function flipCard(cardElement) {
+            cardElement.classList.toggle('flipped');
+            playSoftChime(["E5", "G5"]);
+        }
+
+        // 8. بناء وعرض الكوبونات التفاعلية
+        function renderCoupons() {
+            const container = document.getElementById('coupons-container');
+            if (!container) return;
+            container.innerHTML = '';
+            const cleanPhone = whatsappNumber.replace(/\D/g, '');
+
+            couponsData.forEach(coupon => {
+                const isActivated = !!activatedCoupons[coupon.id];
+                const waUrl = cleanPhone
+                    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(coupon.waText)}`
+                    : `https://wa.me/?text=${encodeURIComponent(coupon.waText)}`;
+
+                const cardHTML = `
+                    <div class="glass-card ticket-cutout rounded-2xl p-5 border ${isActivated ? 'border-gold/70 bg-deepnavy/90' : 'border-gold/25'} transition-all duration-300">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-2xl shrink-0">
+                                    ${coupon.icon}
+                                </div>
+                                <div>
+                                    <span class="inline-block text-[10px] font-bold tracking-wider uppercase text-gold/80 mb-0.5">
+                                        ${coupon.badge}
+                                    </span>
+                                    <h3 class="font-serif text-xl font-bold text-gold-light">
+                                        ${coupon.title}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4 pr-14">
+                            ${coupon.desc}
+                        </p>
+
+                        <div class="pt-3 border-t border-dashed border-gold/25 flex items-center justify-between gap-2">
+                            ${isActivated ? `
+                                <a href="${waUrl}" target="_blank" class="flex-1 py-2.5 px-4 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-[#4ADE80] font-bold text-xs text-center transition-all">
+                                    أرسلي الكوبون على واتساب الآن 📲
+                                </a>
+                                <button onclick="resetCoupon('${coupon.id}')" class="px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 text-[11px] transition-colors" title="تجديد الكوبون">
+                                    تجديد ↻
+                                </button>
+                            ` : `
+                                <button onclick="activateCoupon('${coupon.id}')" class="w-full py-2.5 px-4 rounded-xl bg-gold/15 hover:bg-gold/25 border border-gold/40 text-gold-light font-bold text-xs transition-all flex items-center justify-center gap-1.5">
+                                    <span>تفعيل واستخدام الكوبون</span>
+                                    <span>✨</span>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        function activateCoupon(id) {
+            activatedCoupons[id] = true;
+            try {
+                localStorage.setItem('activatedCoupons_v1', JSON.stringify(activatedCoupons));
+            } catch (e) {}
+            playSoftChime(["G5", "B5", "D6"]);
+            triggerGoldConfetti();
+            renderCoupons();
+            showToast('تم تفعيل الكوبون! اضغطي على زر واتساب لإرساله فوراً 🎟️', '✨');
+        }
+
+        function resetCoupon(id) {
+            delete activatedCoupons[id];
+            try {
+                localStorage.setItem('activatedCoupons_v1', JSON.stringify(activatedCoupons));
+            } catch (e) {}
+            renderCoupons();
+            showToast('تم تجديد الكوبون وجاهز للاستخدام مرة ثانية ♾️', '🔄');
+        }
+
+        // 9. توثيق البداية الجديدة في قسم الختام
+        function confirmNewBeginning() {
+            playSoftChime(["C5", "E5", "G5", "B5", "C6"]);
+            triggerGoldConfetti();
+
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('ar-SA', options);
+
+            try {
+                localStorage.setItem('newBeginningDate_v1', formattedDate);
+            } catch (e) {}
+            showConfirmedSignature(formattedDate);
+            showToast('أجمل بداية جديدة.. الله يديمكم لبعض ❤️', '🥂');
+        }
+
+        function showConfirmedSignature(dateStr) {
+            document.getElementById('signature-action-area').classList.add('hidden');
+            const confirmedBox = document.getElementById('signature-confirmed');
+            confirmedBox.classList.remove('hidden');
+            document.getElementById('official-date').textContent = dateStr;
+
+            const waMessage = `موافقة نبدأ من جديد ❤️✨\nتم توثيق بدايتنا الجديدة بتاريخ: ${dateStr}`;
+            const cleanPhone = whatsappNumber.replace(/\D/g, '');
+            document.getElementById('whatsapp-final-btn').href = cleanPhone
+                ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMessage)}`
+                : `https://wa.me/?text=${encodeURIComponent(waMessage)}`;
+        }
+
+        // إعادة تعيين البصمة وإرجاع زر الموافقة
+        function resetNewBeginning() {
+            try {
+                localStorage.removeItem('newBeginningDate_v1');
+            } catch (e) {}
+            document.getElementById('signature-confirmed').classList.add('hidden');
+            document.getElementById('signature-action-area').classList.remove('hidden');
+            showToast('تم تصفير البصمة بنجاح ↻', '✨');
+        }
+
+        // التحقق إذا كانت قد ضغطت زر الموافقة مسبقاً
+        try {
+            const savedDate = localStorage.getItem('newBeginningDate_v1');
+            if (savedDate) {
+                showConfirmedSignature(savedDate);
+            }
+        } catch (e) {}
+
+        // 10. رسم خلفية النجوم والجزيئات الذهبية المتلألئة (Canvas)
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStars();
+        }
+
+        function initStars() {
+            stars = [];
+            const count = Math.floor((canvas.width * canvas.height) / 9000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5 + 0.3,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.25 + 0.05,
+                    isGold: Math.random() > 0.4
+                });
+            }
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.y -= star.speed;
+                if (star.y < 0) {
+                    star.y = canvas.height;
+                    star.x = Math.random() * canvas.width;
+                }
+                star.alpha += (Math.random() - 0.5) * 0.03;
+                star.alpha = Math.max(0.15, Math.min(0.9, star.alpha));
+
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = star.isGold 
+                    ? `rgba(212, 175, 55, ${star.alpha})` 
+                    : `rgba(244, 194, 194, ${star.alpha * 0.8})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(animateStars);
+        }
+
+        // ==========================================
+        // 11. برمجة موسيقى الخلفية الهادئة (مدمجة + رابط مخصص)
+        // ==========================================
+        // 11. برمجة تشغيل أغنية الخلفية (MP3)
+        // ==========================================
+        let isMusicPlaying = false;
+        const audioEl = document.getElementById('bg-audio-element');
+        if (musicSrc && audioEl) {
+            audioEl.src = musicSrc;
+        }
+
+        function updateMusicUI() {
+            const icon = document.getElementById('music-icon');
+            const statusText = document.getElementById('music-status-text');
+            if (!icon || !statusText) return;
+            if (isMusicPlaying) {
+                icon.textContent = '🎶';
+                statusText.textContent = 'إيقاف الأغنية';
+            } else {
+                icon.textContent = '🔇';
+                statusText.textContent = 'تشغيل الأغنية';
+            }
+        }
+
+        function startBackgroundMusic() {
+            if (isMusicPlaying || !audioEl) return;
+            if (!musicSrc) {
+                return;
+            }
+            if (!audioEl.src) {
+                audioEl.src = musicSrc;
+            }
+            audioEl.volume = 0.6;
+            audioEl.play().then(() => {
+                isMusicPlaying = true;
+                updateMusicUI();
+            }).catch(() => {
+                // في حال حظر المتصفح التشغيل التلقائي قبل اللمس، ستعمل مع أول لمسة للشاشة
+            });
+        }
+
+        function stopBackgroundMusic() {
+            if (audioEl) {
+                audioEl.pause();
+            }
+            isMusicPlaying = false;
+            updateMusicUI();
+        }
+
+        function toggleBackgroundMusic() {
+            if (isMusicPlaying) {
+                stopBackgroundMusic();
+            } else {
+                if (!musicSrc) {
+                    showToast('تأكد من وضع اسم ملف الـ MP3 داخل متغير musicSrc في الكود 🎵', '⚠️');
+                    return;
+                }
+                startBackgroundMusic();
+            }
+        }
+
+        // محاولة التشغيل التلقائي مع أول لمسة أو نقرة في أي مكان بالصفحة
+        function unlockAudioOnFirstInteraction() {
+            if (!isMusicPlaying && musicSrc) {
+                startBackgroundMusic();
+            }
+            if (isMusicPlaying) {
+                document.removeEventListener('click', unlockAudioOnFirstInteraction);
+                document.removeEventListener('touchstart', unlockAudioOnFirstInteraction);
+            }
+        }
+        document.addEventListener('click', unlockAudioOnFirstInteraction);
+        document.addEventListener('touchstart', unlockAudioOnFirstInteraction);
+
+        window.addEventListener('resize', resizeCanvas);
+        window.onload = function() {
+            resizeCanvas();
+            animateStars();
+            renderCoupons();
+            startBackgroundMusic();
+        };
+    </script>
+</body>
+</html>
